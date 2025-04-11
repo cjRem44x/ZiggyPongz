@@ -39,7 +39,7 @@ This project is created for educational purposes only to demonstrate:
 
 ## Disclaimer
 
-This is a learning project and is not intended for commercial use. All code is written for educational purposes to understand game development concepts and the Zig programming language.8
+This is a learning project and is not intended for commercial use. All code is written for educational purposes to understand game development concepts and the Zig programming language. 
 
 
 ## Building and Running
