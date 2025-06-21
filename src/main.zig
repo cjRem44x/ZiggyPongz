@@ -1,26 +1,26 @@
 // Import Raylib module for drawing and input
-const rl = @import("raylib");
+const rl      = @import("raylib");
 
-const std = @import("std");
+const std     = @import("std");
 const print   =  std.debug.print;
 
 // Define some custom colors using Raylib's Color struct (RGBA format)
-const green = rl.Color{ .r = 38, .g = 154, .b = 185, .a = 255 };
-const dark_green = rl.Color{ .r = 0, .g = 33, .b = 0, .a = 255 };
+const green       = rl.Color{ .r = 38, .g = 154, .b = 185, .a = 255 };
+const dark_green  = rl.Color{ .r = 0, .g = 33, .b = 0, .a = 255 };
 const light_green = rl.Color{ .r = 129, .g = 184, .b = 204, .a = 255 };
-const yellow = rl.Color{ .r = 243, .g = 91, .b = 213, .a = 255 };
-const myblue = rl.Color{ .r = 33, .g = 19, .b = 216, .a = 255 };
-const mypurple = rl.Color{ .r = 40, .g = 25, .b = 144, .a = 255 };
-const myblack = rl.Color{ .r = 16, .g = 16, .b = 36, .a = 255 };
+const yellow      = rl.Color{ .r = 243, .g = 91, .b = 213, .a = 255 };
+const myblue      = rl.Color{ .r = 33, .g = 19, .b = 216, .a = 255 };
+const mypurple    = rl.Color{ .r = 40, .g = 25, .b = 144, .a = 255 };
+const myblack     = rl.Color{ .r = 16, .g = 16, .b = 36, .a = 255 };
 
 // Global variables to track player and CPU scores
 var player_score: u32 = 0;
-var cpu_score: u32 = 0;
+var cpu_score:    u32 = 0;
 
 // WINDOW PROPERTIES //
 //
-const GAME_TITLE = "Pong ポン ポンゲーム 弹球游戏"; // Title of the game window
-var screen_width: i32 = 1200; // Width of the game window
+const GAME_TITLE       = "Pong ポン ポンゲーム 弹球游戏"; // Title of the game window
+var screen_width:  i32 = 1200; // Width of the game window
 var screen_height: i32 = 800; // Height of the game window
 
 // Struct representing the ball, with position, velocity, and radius
