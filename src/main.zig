@@ -1,6 +1,9 @@
 // Import Raylib module for drawing and input
 const rl = @import("raylib");
 
+const std = @import("std");
+const print   =  std.debug.print;
+
 // Define some custom colors using Raylib's Color struct (RGBA format)
 const green = rl.Color{ .r = 38, .g = 154, .b = 185, .a = 255 };
 const dark_green = rl.Color{ .r = 0, .g = 33, .b = 0, .a = 255 };
@@ -13,6 +16,12 @@ const myblack = rl.Color{ .r = 16, .g = 16, .b = 36, .a = 255 };
 // Global variables to track player and CPU scores
 var player_score: u32 = 0;
 var cpu_score: u32 = 0;
+
+// WINDOW PROPERTIES //
+//
+const GAME_TITLE = "Pong ポン ポンゲーム 弹球游戏"; // Title of the game window
+var screen_width: i32 = 1200; // Width of the game window
+var screen_height: i32 = 800; // Height of the game window
 
 // Struct representing the ball, with position, velocity, and radius
 const Ball = struct {
@@ -116,24 +125,22 @@ fn update_cpu_paddle(p: *Paddle, b: *Ball) void {
 
 // Entry point of the program
 pub fn main() !void {
-    // Screen and paddle dimensions
-    const screen_width = 1200;
-    const screen_height = 800;
+    // paddle dimensions
     const p_width = 25;
     const p_height = 120;
 
     // Initialize ball and paddles
     var ball = Ball{
-        .x = screen_width / 2,
-        .y = screen_height / 2,
+        .x = i32tof32(@divTrunc(screen_width, 2)),
+        .y = i32tof32(@divTrunc(screen_height, 2)),
         .vx = 7,
         .vy = 7,
         .rad = 20,
     };
 
     var player = Paddle{
-        .x = screen_width - p_width - 10,
-        .y = screen_height / 2 - p_height / 2,
+        .x = i32tof32(screen_width - p_width - 10),
+        .y = i32tof32( @divTrunc(screen_height, 2) - @divTrunc(p_height, 2) ),
         .width = p_width,
         .height = p_height,
         .speed = 12,
@@ -141,15 +148,18 @@ pub fn main() !void {
 
     var cpu = Paddle{
         .x = 10,
-        .y = screen_height / 2 - p_height / 2,
+        .y = i32tof32( @divTrunc(screen_height, 2) - @divTrunc(p_height, 2) ),
         .width = p_width,
         .height = p_height,
         .speed = 6,
     };
 
     // Initialize the game window
-    rl.initWindow(screen_width, screen_height, "Pong ポン ポンゲーム 弹球游戏");
+    rl.initWindow(screen_width, screen_height, GAME_TITLE);
     rl.setTargetFPS(60); // Run at 60 frames per second
+
+    compute_window_size(screen_width, screen_height); // Adjust window size if needed
+    rl.setWindowSize(screen_width, screen_height); // Set the window size
 
     // Main game loop
     while (!rl.windowShouldClose()) {
@@ -189,20 +199,45 @@ pub fn main() !void {
         rl.clearBackground(myblack); // Clear screen
 
         // Center decorations
-        rl.drawRectangle(screen_width / 2, 0, screen_width / 2, screen_height, myblack);
-        rl.drawCircle(screen_width / 2, screen_height / 2, 150, mypurple);
-        rl.drawLine(screen_width / 2, 0, screen_width / 2, screen_height, mypurple);
-
+        const center_x = @divTrunc(screen_width, 2);
+        const center_y = @divTrunc(screen_height, 2);
+        
+        rl.drawRectangle(center_x, 0, screen_width - center_x, screen_height, myblack);
+        rl.drawCircle(center_x, center_y, 150, mypurple);
+        rl.drawLine(center_x, 0, center_x, screen_height, mypurple);
+        
         // Draw game objects
         draw_ball(&ball);
         draw_paddle(&player);
         draw_paddle(&cpu);
 
         // Draw scores
-        rl.drawText(rl.textFormat("%i", .{cpu_score}), screen_width / 4 - 20, 20, 80, myblue);
-        rl.drawText(rl.textFormat("%i", .{player_score}), 3 * screen_width / 4 - 20, 20, 80, myblue);
+        rl.drawText(rl.textFormat("%i", .{cpu_score}), @divTrunc(screen_width, 4) - 20, 20, 80, myblue);
+        rl.drawText(rl.textFormat("%i", .{player_score}), 3 * @divTrunc(screen_width, 4) - 20, 20, 80, myblue);
     }
 
     // Clean up and close the window
     rl.closeWindow();
+}
+
+// HELPER FUNCTIONS //
+//
+// Covnersions
+fn i32tof32(i: i32) f32 {
+    return @as(f32, @floatFromInt(i));
+}
+//
+fn f32toi32(i: f32) i32 {
+    return @as(i32, @intFromFloat(i));
+}
+
+// Dynamically adjust window size if monitor is larger than 1920x1080
+pub fn compute_window_size(w: i32, h: i32) void {
+    if (w > 1920 and h > 1080) {
+        const r_w = i32tof32(w) / 1920.0;
+        const r_h = i32tof32(h) / 1080.0;
+        print("{d}\n", .{r_w}); // Log scaling ratio
+        screen_width = f32toi32(i32tof32(screen_width) * r_w);
+        screen_height = f32toi32(i32tof32(screen_height) * r_h);
+    }
 }
